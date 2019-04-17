@@ -34,7 +34,7 @@ function Remove-DomainControllerSRVRecords
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             Position = 0)]
-        $domainFQDN
+        $domainFQDN        
     )
 
     Begin
@@ -85,10 +85,10 @@ function Remove-DomainControllerSRVRecords
                 $srvRecordsinInZone = (Resolve-DnsName -Type SRV -Name $zone -Server $dc -ErrorAction SilentlyContinue).Name 
                 if ($srvRecordsinInZone)
                 {
-                    if ($dc -in $srvRecordsinInZone)
+                    if ($dcName -in $srvRecordsinInZone)
                     {
-                        Write-Host "$dc is in $zone" -ForegroundColor Green
-                        Remove-DnsServerResourceRecord  -Name $dc -ZoneName $zone -ComputerName $dc -RRType "SRV"
+                        Write-Host "$dcName is in $zone" -ForegroundColor Green
+                       # Remove-DnsServerResourceRecord  -Name $dc -ZoneName $zone -ComputerName $dc -RRType "SRV"
                     }
                 }
             }  
