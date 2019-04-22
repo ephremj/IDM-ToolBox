@@ -78,7 +78,7 @@ function Remove-DomainControllerSRVRecords
             foreach ($zone in $zonesToCheck)
             {
                 $srvRecordsinInZone = $null
-                $srvRecordsinInZone = (Resolve-DnsName -Type SRV -Name $zone -Server $dc -ErrorAction SilentlyContinue).Name 
+                $srvRecordsinInZone = (Resolve-DnsName -Type SRV -Name $zone -Server $dcName -ErrorAction SilentlyContinue).Name 
                 if ($null -ne $srvRecordsinInZone)
                 {
                     if ($dcName -in $srvRecordsinInZone)
