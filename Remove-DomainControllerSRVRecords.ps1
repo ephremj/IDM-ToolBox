@@ -2,43 +2,37 @@
 .Synopsis
    Removes SRV records of a Domain Controller
 .DESCRIPTION
-   Removes SRV records of a Domain Controller from domain, forest and AD site zones.   
+   Removes SRV records of a Domain Controller from domain, forest and AD site zones. 
+   Requires the neccessary elevated permission to delete  SRV DNS records.  
 .EXAMPLE
    Remove-DomainControllerSRVRecords -dcName "dc-01.corp.contoso.local" -forestFQDN "contoso.local" -domainFQDN "corp.contoso.local"
 .EXAMPLE
    Remove-DomainControllerSRVRecords -dcName "testdc01.testdomain.local" -forestFQDN "testdomain.local" -domainFQDN "testdomain.local"
 .Notes
-   Auther:  Ephrem Woldesemaite
+   Auther:  Ephrem J. Woldesemaite
    Version: 0.0.1
 #>
 function Remove-DomainControllerSRVRecords
-{
+{    
     [CmdletBinding()]
-    [Alias()]
-    [OutputType([int])]
     Param
     (
-        # dcName help description
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
-            Position = 0)]
-        $dcName,
+        # dcName domain controller's name
+        [Parameter(Mandatory = $true)]                        
+        [System.String]$dcName,
 
-        # forestFQDN help description
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
-            Position = 0)]
-        $forestFQDN,
+        # forestFQDN domain controller's forest               
+        [System.String]$forestFQDN = (Get-ADDomain -Server $dcName).forest,
 
-        # domainFQDN help description
-        [Parameter(Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
-            Position = 0)]
-        $domainFQDN        
+        # domainFQDN domain controller's domain                
+        [System.String]$domainFQDN = (Get-ADDomain -Server $dcName).DNSRoot
     )
 
     Begin
     {
+       if ($dcName -notcontains $doaminFQDN) {$dcName = $dcname + "." + $domainFQDN}
+        Write-Host "Removing SRV records of domain controller: $dcNAme"
+        Write-Host "It could take longer if you have large number AD sites."
         # Intialize forest and domain possible zones where the domain controller registger its SRV records
         $zonesToCheck = @()
         $zonesToCheck += "_gc._tcp." + $forestFQDN + "."
@@ -74,7 +68,7 @@ function Remove-DomainControllerSRVRecords
         }
         catch 
         {
-            Write-Host "No sites discover to remove AD Site based SRV records" -ForegroundColor Yellow
+            Write-Host "No sites discovered to remove SRV records from AD site based zones" -ForegroundColor Yellow
         }        
 
         try 
@@ -83,12 +77,12 @@ function Remove-DomainControllerSRVRecords
             {
                 $srvRecordsinInZone = $null
                 $srvRecordsinInZone = (Resolve-DnsName -Type SRV -Name $zone -Server $dc -ErrorAction SilentlyContinue).Name 
-                if ($srvRecordsinInZone)
+                if ($null -ne $srvRecordsinInZone)
                 {
                     if ($dcName -in $srvRecordsinInZone)
                     {
-                        Write-Host "$dcName is in $zone" -ForegroundColor Green
-                       # Remove-DnsServerResourceRecord  -Name $dc -ZoneName $zone -ComputerName $dc -RRType "SRV"
+                        Write-Host "Removing SRV records of $dcName from $zone ...." -ForegroundColor Green
+                        Remove-DnsServerResourceRecord  -Name $dcName -ZoneName $zone -ComputerName $dcName -RRType "SRV"
                     }
                 }
             }  
