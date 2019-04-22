@@ -5,7 +5,8 @@
    Removes SRV records of a Domain Controller from domain, forest and AD site zones. 
    Requires the neccessary elevated permission to delete  SRV DNS records.  
 .EXAMPLE
-   Remove-DomainControllerSRVRecords -dcName "dc-01.corp.contoso.local" -forestFQDN "contoso.local" -domainFQDN "corp.contoso.local"
+   Remove-DomainControllerSRVRecords -dcName "dc-01.corp.contoso.local" 
+   Remove-DomainControllerSRVRecords -dcName "dc-01.corp" 
 .EXAMPLE
    Remove-DomainControllerSRVRecords -dcName "testdc01.testdomain.local" -forestFQDN "testdomain.local" -domainFQDN "testdomain.local"
 .Notes
