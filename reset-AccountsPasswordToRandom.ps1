@@ -7,6 +7,9 @@
    get-RandomPassword
 .EXAMPLE
    get-RandomPassword -length 10
+.Notes
+   Auther:  Ephrem Woldesemaite
+   Version: 0.0.1
 #>
 function get-RandomPassword
 {
@@ -44,6 +47,9 @@ function get-RandomPassword
    reset-AccountsPasswordToRandom -userName alias -domain contoso.local
 .EXAMPLE
    reset-AccountsPasswordToRandom -userName alias
+.Notes
+   Auther:  Ephrem Woldesemaite
+   Version: 0.0.1
 #>
 function reset-AccountsPasswordToRandom
 {
