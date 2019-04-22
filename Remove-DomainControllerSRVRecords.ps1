@@ -32,7 +32,7 @@ function Remove-DomainControllerSRVRecords
     {
        if ($dcName -notcontains $doaminFQDN) {$dcName = $dcname + "." + $domainFQDN}
         Write-Host "Removing SRV records of domain controller: $dcNAme"
-        Write-Host "It could take longer if you have large number AD sites."
+        Write-Host "It could take longer if the domain controller has been responsible to autosite cover  large number AD sites."
         # Intialize forest and domain possible zones where the domain controller registger its SRV records
         $zonesToCheck = @()
         $zonesToCheck += "_gc._tcp." + $forestFQDN + "."
@@ -53,7 +53,8 @@ function Remove-DomainControllerSRVRecords
         try
         {
             # Add AD site based possible zones that the domain controller could have registred its SRV records 
-            $sites = (Get-ADReplicationSite -filter * -Server $forestFQDN).Name            
+            #$sites = (Get-ADReplicationSite -filter * -Server $forestFQDN).Name             
+            $sites = nltest /DSGETSITECOV /server:$dcName                            
             foreach ($site in $sites)
             {
                 $zonesToCheck += "_kerberos._tcp." + $site + "._sites.dc._msdcs." + $domainFQDN + "."
@@ -64,7 +65,7 @@ function Remove-DomainControllerSRVRecords
                 $zonesToCheck += "_ldap._tcp." + $site + "._sites.gc._msdcs." + $forestFQDN + "."
                 $zonesToCheck += "_ldap._tcp." + $site + "._sites." + $domainFQDN + "."
                 $zonesToCheck += "_gc._tcp." + $site + "._sites." + $forestFQDN + "."
-            }
+            }            
         }
         catch 
         {
