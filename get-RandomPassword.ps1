@@ -2,7 +2,7 @@
 .Synopsis
    Generate a random password
 .DESCRIPTION
-   Generate a random password. If length not specified, it will changeret 50 characters long.
+   Generate a random password. If length not specified, it will generate 50 characters long.
 .EXAMPLE
    get-RandomPassword
 .EXAMPLE
